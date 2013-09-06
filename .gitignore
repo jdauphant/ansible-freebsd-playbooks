@@ -1,0 +1,7 @@
+ansible_hosts
+group_vars/all
+host_vars/*
+!host_vars/*.example
+*~
+.*
+!.gitignore

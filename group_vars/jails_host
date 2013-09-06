@@ -1,0 +1,4 @@
+---
+jails_dir: /jails
+jails_zfs_root: tank/jails
+jails_netmask_lo1: 255.255.255.0 

@@ -1,0 +1,9 @@
+# Generated with Ansible
+cloned_interfaces="lo1"
+{% for jail in jails_hosted %}
+{% if loop.first %}
+ifconfig_lo1="{{ hostvars[jail]['ansible_ssh_host'] }} netmask {{ jails_netmask_lo1 }} broadcast {{ jails_broadcast_lo1 }}"
+{% else %}
+ifconfig_lo1_alias{{ loop.index0 -1 }}="{{ hostvars[jail]['ansible_ssh_host'] }} netmask {{ jails_netmask_lo1 }}"
+{% endif %}
+{% endfor %}

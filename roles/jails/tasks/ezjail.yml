@@ -1,0 +1,20 @@
+---
+ - name: Install ezjail
+   pkgng: name=ezjail state=present
+
+ - name: Base configuration of ezjail
+   template: src=ezjail.conf.j2 dest=/usr/local/etc/ezjail.conf
+
+ - name: Test if basejail folder exist
+   shell: /bin/test -d {{ jails_dir }}/basejail/
+   register: basejail
+   ignore_errors: True
+   changed_when: "basejail.rc != 0"
+
+ - name: Be sure ezjail basejail is installed
+   command: /usr/local/bin/ezjail-admin install
+   when: "basejail.rc != 0"
+
+ - name: Be sure ezjail enabled on startup
+   service: name=ezjail enabled=yes
+   tags: ezjail

@@ -1,0 +1,9 @@
+---
+ - name: restart sshd
+   service: name=sshd state=restarted
+
+ - name: restart network
+   service: name=netif state=restarted
+
+ - name: reload pf
+   service: name=pf state=reloaded

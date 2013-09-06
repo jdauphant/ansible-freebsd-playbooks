@@ -1,0 +1,44 @@
+---
+ - name: Be sure of sshd configuration
+   template: src=sshd_config.j2 dest=/etc/ssh/sshd_config
+   notify: sshd restart
+   tags: sshd
+
+ # PF rules create quickly (before ssh bruteforce banish), if curent ip could be block if not present in the whitelist
+ - include: pf.yml
+
+ - name: Be sure security sysctl flags are configured
+   sysctl: name={{ item.name }} value={{ item.value }} state=present checks=none reload=yes
+   with_items:
+    - { name: 'security.bsd.unprivileged_proc_debug', value: 0 }
+    - { name: 'security.bsd.see_other_uids', value: 0 }
+    - { name: 'net.inet.tcp.drop_synfin', value: 1 }
+    - { name: 'net.inet.tcp.blackhole', value: 2 }
+    - { name: 'net.inet.udp.blackhole', value: 1 }
+
+ - name: Be sure /etc/rc.conf.d exist
+   file: path=/etc/rc.conf.d/ state=directory owner=root group=wheel mode=0655
+
+ - name: Be sure Motd exist
+   template: src=motd.j2 dest=/etc/motd  
+
+ - name: Be sure pkgng repository is configured
+   template: src=pkg.conf.j2 dest=/usr/local/etc/pkg.conf
+
+ - name: Be sure sudo is installed
+   pkgng: name=sudo state=present
+
+ - name: Be sure sudo is configured
+   copy: src=sudoers dest=/usr/local/etc/sudoers validate='visudo -cf %s'
+
+ - name: Be sure usefull tools are installed
+   pkgng: name={{ item }} state=present
+   with_items:
+     - vim-lite
+     - screen
+     - nmap
+     - zsh
+     - git
+     - mercurial
+     - curl
+

@@ -1,0 +1,28 @@
+{{ ansible_distribution_version }}
+{% if ansible_distribution == "FreeBSD" %}
+    _____                        ____    ____    ____
+   |  ___|  _ __    ___    ___  | __ )  / ___|  |  _ \
+   | |_    | '__|  / _ \  / _ \ |  _ \  \___ \  | | | |    ,     , 
+   |  _|   | |    |  __/ |  __/ | |_) |  ___) | | |_| |  ,(       ).
+ | |_|     |_|     \___|  \___| |____/  |____/  |____/   | \,--_ / |
+ `-------------------------------- the power to serve    /_  _  `  /
+                                                        /-.,-.`    \
+                        Welcome to FreeBSD {{ ansible_distribution_release }}  | |   \     \
+          ._____________________________________________\O|O  |     |__.
+          |                                           (___)`--'_    /  |
+          |   THIS SYSTEM IS RESTRICTED TO             `.______/`  /   |
+          |   AUTHORIZED USERS FOR AUTHORIZED            `.__,   ,/    |
+          |   USE ONLY, CHEERS.                             /    \     |
+          |____________________________________<----.______/ __   \____|
+                                               <----|===)))==) \) /=====
+                                               <----'  `--' `.__,' |   _
+                                                          |        |  / \
+                                                           \ _     /`-' \/
+                                                       ,----` \   /        
+                                                       \_,-----'  \         
+                                                         \________/
+{% endif %}Hostname : {{ ansible_hostname }}
+IP : {{ ansible_default_ipv4.address }} 
+{% for processor in ansible_processor %}{% if loop.first %} {{ processor }} {% endif %}
+{% endfor %}
+

@@ -1,0 +1,19 @@
+---
+ - name: Be sure pf.further-(params|set|nat|filter).conf and pf.ban exist
+   copy: content="" dest=/etc/{{ item }} force=no owner=root group=wheel mode=0600
+   with_items:
+     - pf.further-params.conf
+     - pf.further-set.conf
+     - pf.further-nat.conf
+     - pf.further-filter.conf
+     - pf.ban
+   tags: pf
+
+ - name: Create pf.conf
+   template: src=pf.conf.j2 dest=/etc/pf.conf mode=0600 validate='pfctl -n -f %s'
+   tags: pf
+
+ - name: Be sure PF is running and enabled
+   service: name=pf state=reloaded enabled=yes
+   tags: pf
+

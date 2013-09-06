@@ -1,0 +1,15 @@
+[jails_host]
+jailhost.domain
+
+[jail_poudriere]
+poudriere.jailhost.domain ansible_ssh_host=172.16.0.1 name=poudriere
+
+[jail_nginx]
+nginx.jailhost.domain ansible_ssh_host=172.16.0.2 name=nginx
+
+[jails:children]
+jail_poudriere
+jail_nginx
+
+[all:vars]
+pkgng_repository=https://pkg.cdn.pcbsd.org/9.1-RELEASE/amd64

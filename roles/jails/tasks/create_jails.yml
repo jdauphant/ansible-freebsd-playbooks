@@ -1,0 +1,45 @@
+---
+ - name: Be sure each Jail are created
+   ezjail: name={{ hostvars[item]['name'] }} ip_addr={{ hostvars[item]['ansible_ssh_host']  }} disktype=zfs
+   with_items: jails_hosted
+
+ - name: Be sure /usr/local/etc is present in each jail
+   file: path={{ jails_dir }}/{{ hostvars[item]['name'] }}/usr/local/etc state=directory owner=root group=wheel
+   with_items: jails_hosted
+
+ - name: Be sure pkgng configuration is present in each jail
+   template: src=pkg.conf.j2 dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/usr/local/etc/pkg.conf
+   with_items: jails_hosted
+
+ - fetch: src=/etc/resolv.conf dest=/tmp/ansible
+
+ - name: Be sure resolv.conf is present in each jail
+   template: src=/tmp/ansible/{{ inventory_hostname  }}/etc/resolv.conf dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/etc/resolv.conf
+   with_items: jails_hosted
+
+ - name: Be sure rc.conf is configured in each jail
+   template: src=rc.conf.j2 dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/etc/rc.conf
+   with_items: jails_hosted
+
+ - name: Be sure sshd permit root login
+   lineinfile:  dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/etc/ssh/sshd_config regexp="^#PermitRootLogin" line="PermitRootLogin yes" backrefs=yes
+   with_items: jails_hosted
+
+ - name: Be sure /root/.ssh is private
+   file: path={{ jails_dir }}/{{ hostvars[item]['name'] }}/root/.ssh owner=root group=wheel mode=700 state=directory
+   with_items: jails_hosted
+
+ - name: Be sure public key is copy to root
+   copy: src={{ ssh_public_key_file }} dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/root/.ssh/authorized_keys owner=root group=wheel mode=600
+   with_items: jails_hosted
+
+ - name: Be sure ezjail is started
+   service: name=ezjail state=restarted
+
+ - name: Be sure pkgng is present in each jail
+   pkgng_chroot: name=pkg chroot="{{ jails_dir }}/{{ hostvars[item]['name'] }}" state=present
+   with_items: jails_hosted
+
+ - name: Be sure python is present in each jail
+   pkgng_chroot: name=python27 chroot="{{ jails_dir }}/{{ hostvars[item]['name'] }}" state=present
+   with_items: jails_hosted

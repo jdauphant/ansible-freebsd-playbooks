@@ -1,0 +1,6 @@
+---
+ - hosts: jails_host
+   roles:
+     - common_fb_host
+     - vpn
+     - jails

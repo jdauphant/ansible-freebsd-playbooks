@@ -1,0 +1,26 @@
+---
+ - name: Create ZFS partition for jails
+   zfs: name={{ jails_zfs_root }} mountpoint={{ jails_dir }} checksum={{ zfs_checksum }} state=present
+
+ - name: Configure network interface for jails
+   template: src=network.j2 dest=/etc/rc.conf.d/network
+   notify: restart network
+
+ - name: Be sure jails params are in /etc/pf.futher-params.conf
+   lineinfile:  dest=/etc/pf.further-params.conf regexp="^{{ item.regexp }}" insertafter=EOF line="{{ item.line }}"
+   with_items:
+    - { regexp: 'jails_if=', line: 'jails_if=\"lo1\"' }
+    - { regexp: 'table <jails>', line: 'table <jails> { {{ jails_natted }} }' }
+   notify: reload pf
+
+ - name: Be sure jails interface are skip in /etc/pf.futher-set.conf
+   lineinfile:  dest=/etc/pf.further-set.conf regexp="^set skip on .jails_if" insertafter=EOF line="set skip on $jails_if"
+   notify: reload pf
+
+ - name: Be sure jails nat rules are in /etc/pf.futher-nat.conf
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^nat on .ext_if from <jails> to any" insertafter=EOF line="nat on $ext_if from <jails> to any -> ($ext_if)"
+   notify: reload pf
+
+ - include: ezjail.yml
+
+ - include: create_jails.yml

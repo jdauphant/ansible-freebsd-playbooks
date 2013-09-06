@@ -1,0 +1,13 @@
+---
+jails_broadcast_lo1: 172.16.0.255
+jails_natted: 172.16.0.0/24
+jails_hosted:
+   - poudriere.jailhost.domain
+   - nginx.jailhost.domain
+default_tcp_ports_authorized:
+  - ssh
+  - http
+  - https
+in_nat_rules:
+  - { in=80, host=nginx.jailhost.domain, out=80 }
+  - { in=443, host=nginx.jailhost.domain, out=443 }

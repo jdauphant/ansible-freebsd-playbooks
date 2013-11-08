@@ -2,10 +2,10 @@
 jailhost.domain
 
 [jail_poudriere]
-poudriere.jailhost.domain ansible_ssh_host=172.16.0.1 name=poudriere
+poudriere.jailhost.domain ip=172.16.0.1 ansible_ssh_host=jailhost.domain ansible_ssh_port=2000 name=poudriere
 
 [jail_nginx]
-nginx.jailhost.domain ansible_ssh_host=172.16.0.2 name=nginx
+nginx.jailhost.domain ip=172.16.0.2 ansible_ssh_host=jailhost.domain ansible_ssh_port=2001  name=nginx
 
 [jails:children]
 jail_poudriere

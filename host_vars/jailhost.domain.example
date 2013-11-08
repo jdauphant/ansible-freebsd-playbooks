@@ -8,6 +8,6 @@ default_tcp_ports_authorized:
   - ssh
   - http
   - https
-in_nat_rules:
+jails_in_nat_rules:
   - { in=80, host=nginx.jailhost.domain, out=80 }
   - { in=443, host=nginx.jailhost.domain, out=443 }

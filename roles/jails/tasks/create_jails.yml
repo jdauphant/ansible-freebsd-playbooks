@@ -1,6 +1,6 @@
 ---
  - name: Be sure each Jail are created
-   ezjail: name={{ hostvars[item]['name'] }} ip_addr={{ hostvars[item]['ansible_ssh_host']  }} disktype=zfs
+   ezjail: name={{ hostvars[item]['name'] }} ip_addr={{ hostvars[item]['ip']  }} disktype=zfs
    with_items: jails_hosted
 
  - name: Be sure /usr/local/etc is present in each jail
@@ -43,3 +43,9 @@
  - name: Be sure python is present in each jail
    pkgng_chroot: name=python27 chroot="{{ jails_dir }}/{{ hostvars[item]['name'] }}" state=present
    with_items: jails_hosted
+
+ - name: Be sure rdr rule are in /etc/pf.futher-nat.conf for each jail
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from any to .server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22" 
+            insertafter=EOF line="rdr on $ext_if proto tcp from any to $server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22"
+   with_items: jails_hosted
+   notify: reload pf

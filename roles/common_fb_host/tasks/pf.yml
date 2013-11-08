@@ -6,6 +6,7 @@
      - pf.further-set.conf
      - pf.further-nat.conf
      - pf.further-filter.conf
+     - pf.further-pass.conf
      - pf.ban
    tags: pf
 

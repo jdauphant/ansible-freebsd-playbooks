@@ -45,6 +45,7 @@ include "/etc/pf.further-filter.conf"
 
 # Authorize defaults ports
 pass in on $ext_if inet proto tcp from any to any port $tcp_ports_authorized flags any keep state
+include "/etc/pf.further-pass.conf"
 
 # SSH Ban on badguys and ssh-bruteforce not whitelist
 block in quick on $ext_if from <badguys> to any

@@ -11,6 +11,7 @@
    with_items:
     - { regexp: 'jails_if=', line: 'jails_if=\"lo1\"' }
     - { regexp: 'table <jails>', line: 'table <jails> { {{ jails_natted }} }' }
+    - { regexp: 'jails_ssh_ports_authorized=', line: "jails_ssh_ports_authorized=\\\"{ {% for jail in jails_hosted %}{{ hostvars[jail]['ansible_ssh_port'] }} {% endfor %}}\\\"" }
    notify: reload pf
 
  - name: Be sure jails interface are skip in /etc/pf.futher-set.conf
@@ -19,6 +20,17 @@
 
  - name: Be sure jails nat rules are in /etc/pf.futher-nat.conf
    lineinfile:  dest=/etc/pf.further-nat.conf regexp="^nat on .ext_if from <jails> to any" insertafter=EOF line="nat on $ext_if from <jails> to any -> ($ext_if)"
+   notify: reload pf
+
+ - name: Be sure rdr rules are in /etc/pf.futher-nat.conf
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from any to .server_addr port {{ item.in }} -> {{ hostvars[item.host]['ip'] }} port {{ item.out }}" 
+            insertafter=EOF line="rdr on $ext_if proto tcp from any to $server_addr port {{ item.in }} -> {{ hostvars[item.host]['ip'] }} port {{ item.out }}"
+   with_items: jails_in_nat_rules
+   notify: reload pf
+
+ - name: Be sure ssh authorized ports are in /etc/pf.futher-pass.conf
+   lineinfile:  dest=/etc/pf.further-pass.conf regexp="^pass in on .ext_if inet proto tcp from any to any port .jails_ssh_ports_authorized flags any keep state" 
+            insertafter=EOF line="pass in on $ext_if inet proto tcp from any to any port $jails_ssh_ports_authorized flags any keep state"
    notify: reload pf
 
  - include: ezjail.yml

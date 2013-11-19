@@ -1,3 +1,8 @@
+/bin/
+/lib/
+/src/
+/include/
+/library/ezjail
 ansible_hosts
 group_vars/all
 host_vars/*

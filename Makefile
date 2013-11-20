@@ -7,7 +7,7 @@ bin/ansible: src/ansible/setup.py bin/pip
 library/ezjail: src/ezjailansible/ezjail.py
 	ln -s src/ezjailansible/ezjail.py library/ezjail
 
-buildout: bin/buildout
+src/ansible/setup.py: bin/buildout
 	bin/buildout
 
 bin/buildout: bin/pip

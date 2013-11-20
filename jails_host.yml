@@ -1,5 +1,15 @@
 ---
- - hosts: jails_host
-   roles:
-     - common_fb_host
-     - jails
+# - hosts: jails_host
+#   gather_facts: false
+#   sudo: yes
+#   tasks:
+#     - name: install python27
+#       raw: pkg_add -rF python27
+#     - name: install pkgng
+#       raw: pkg_add -rF pkg
+
+- hosts: jails_host
+  sudo: yes
+  roles:
+   - common_fb_host
+   - jails

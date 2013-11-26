@@ -50,5 +50,5 @@ include "/etc/pf.further-pass.conf"
 # SSH Ban on badguys and ssh-bruteforce not whitelist
 block in quick on $ext_if from <badguys> to any
 block in quick from <ssh-bruteforce> to $server_addr
-pass in quick on $ext_if inet proto tcp from ! <whitelist> to any port $tcp_ports_authorized flags S/SA keep state \
+pass in quick on $ext_if inet proto tcp from ! <whitelist> to any port ssh flags S/SA keep state \
   ( max-src-conn-rate 12/50, overload <ssh-bruteforce> flush global)

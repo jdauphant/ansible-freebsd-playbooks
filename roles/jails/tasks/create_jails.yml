@@ -45,7 +45,7 @@
    with_items: jails_hosted
 
  - name: Be sure rdr rule are in /etc/pf.futher-nat.conf for each jail
-   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from any to .server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22" 
-            insertafter=EOF line="rdr on $ext_if proto tcp from any to $server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22"
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from .* to .server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22" 
+            insertafter=EOF line="rdr on $ext_if proto tcp from <whitelist> to $server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22"
    with_items: jails_hosted
    notify: reload pf

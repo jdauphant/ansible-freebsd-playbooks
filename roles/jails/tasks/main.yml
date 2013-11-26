@@ -23,14 +23,14 @@
    notify: reload pf
 
  - name: Be sure rdr rules are in /etc/pf.futher-nat.conf
-   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from any to .server_addr port {{ item.in }} -> {{ hostvars[item.host]['ip'] }} port {{ item.out }}" 
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from .* to .server_addr port {{ item.in }} -> {{ hostvars[item.host]['ip'] }} port {{ item.out }}" 
             insertafter=EOF line="rdr on $ext_if proto tcp from any to $server_addr port {{ item.in }} -> {{ hostvars[item.host]['ip'] }} port {{ item.out }}"
    with_items: jails_in_nat_rules
    notify: reload pf
 
  - name: Be sure ssh authorized ports are in /etc/pf.futher-pass.conf
-   lineinfile:  dest=/etc/pf.further-pass.conf regexp="^pass in on .ext_if inet proto tcp from any to any port .jails_ssh_ports_authorized flags any keep state" 
-            insertafter=EOF line="pass in on $ext_if inet proto tcp from any to any port $jails_ssh_ports_authorized flags any keep state"
+   lineinfile:  dest=/etc/pf.further-pass.conf regexp="^pass in on .ext_if inet proto tcp from .* to .* port .jails_ssh_ports_authorized flags any keep state" 
+            insertafter=EOF line="pass in on $ext_if inet proto tcp from <whitelist> to $server_addr port $jails_ssh_ports_authorized flags any keep state"
    notify: reload pf
 
  - include: ezjail.yml

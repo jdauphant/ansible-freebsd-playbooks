@@ -4,7 +4,8 @@
 /include/
 /library/ezjail
 ansible_hosts
-group_vars/all
+group_vars
+!group_vars/*example
 host_vars/*
 !host_vars/*.example
 *~

@@ -9,12 +9,7 @@
 
  - name: Be sure security sysctl flags are configured
    sysctl: name={{ item.name }} value={{ item.value }} state=present checks=none reload=yes
-   with_items:
-    - { name: 'security.bsd.unprivileged_proc_debug', value: 0 }
-    - { name: 'security.bsd.see_other_uids', value: 0 }
-    - { name: 'net.inet.tcp.drop_synfin', value: 1 }
-    - { name: 'net.inet.tcp.blackhole', value: 2 }
-    - { name: 'net.inet.udp.blackhole', value: 1 }
+   with_items: sysctl_flags
 
  - name: Be sure /etc/rc.conf.d exist
    file: path=/etc/rc.conf.d/ state=directory owner=root group=wheel mode=0655

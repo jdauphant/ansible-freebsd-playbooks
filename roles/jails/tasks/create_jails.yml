@@ -21,5 +21,31 @@
    template: src=rc.conf.j2 dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/etc/rc.conf
    with_items: jails_hosted
 
+ - name: Be sure sshd permit root login
+   lineinfile:  dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/etc/ssh/sshd_config regexp="^#PermitRootLogin" line="PermitRootLogin yes" backrefs=yes
+   with_items: jails_hosted
+
+ - name: Be sure /root/.ssh is private
+   file: path={{ jails_dir }}/{{ hostvars[item]['name'] }}/root/.ssh owner=root group=wheel mode=700 state=directory
+   with_items: jails_hosted
+
+ - name: Be sure public key is copy to root
+   copy: src={{ ssh_public_key_file }} dest={{ jails_dir }}/{{ hostvars[item]['name'] }}/root/.ssh/authorized_keys owner=root group=wheel mode=600
+   with_items: jails_hosted
+
  - name: Be sure ezjail is started
    service: name=ezjail state=restarted
+
+ - name: Be sure pkgng is present in each jail
+   pkgng_chroot: name=pkg chroot="{{ jails_dir }}/{{ hostvars[item]['name'] }}" state=present
+   with_items: jails_hosted
+
+ - name: Be sure python is present in each jail
+   pkgng_chroot: name=python27 chroot="{{ jails_dir }}/{{ hostvars[item]['name'] }}" state=present
+   with_items: jails_hosted
+
+ - name: Be sure rdr rule are in /etc/pf.futher-nat.conf for each jail
+   lineinfile:  dest=/etc/pf.further-nat.conf regexp="^rdr on .ext_if proto tcp from any to .server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22" 
+            insertafter=EOF line="rdr on $ext_if proto tcp from any to $server_addr port {{ hostvars[item]['ansible_ssh_port'] }} -> {{ hostvars[item]['ip'] }} port 22"
+   with_items: jails_hosted
+   notify: reload pf

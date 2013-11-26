@@ -1,3 +1,2 @@
 ---
-
-- include: jails_host.yml
+ - include: jails_host.yml

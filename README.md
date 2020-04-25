@@ -1,6 +1,8 @@
 Playbooks for FreeBSD
 =====================
 
+## @jdauphant : I don't have time to manage anymore this role. Don't hesitate to fork and made your own version.
+
 Playbook example for FreeBSD
 
 ## Goals :
